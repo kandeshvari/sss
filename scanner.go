@@ -1,7 +1,8 @@
-package main
+package sss
 
-type TokenType NodeType
+type TokenType NodeType // use tree node types as token types. It simplifies parser code
 
+// map to convert token constant to string
 var tokenMap = map[TokenType]string{
 	EMPTY:     "EMPTY",     // no token
 	LITERAL:   "LITERAL",   // letter(s)
@@ -16,23 +17,26 @@ var tokenMap = map[TokenType]string{
 }
 
 type Token struct {
-	Type  TokenType
-	Value string
+	Type  TokenType // token constant
+	Value string    // token value
 }
 
 type Scanner struct {
-	buf *string
-	pos int
+	buf *string // placeholder for input string
+	pos int     // current reader position
 }
 
+// Get new scanner
 func NewScanner(str *string) *Scanner {
 	return &Scanner{buf: str, pos: 0}
 }
 
+// Check is rune from letters range
 func isLetter(ch rune) bool {
 	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
 }
 
+// recursively tokenize input string
 func read(str *string, pos *int, token *Token) {
 	if *pos >= len(*str) {
 		if token.Type == EMPTY {
@@ -59,46 +63,27 @@ func read(str *string, pos *int, token *Token) {
 		if token.Type != LITERAL {
 			switch curSymbol {
 			case '[':
-				{
-					token.Type = LSBRACKET
-					token.Value = "["
-				}
+				token.Type = LSBRACKET
 			case ']':
-				{
-					token.Type = RSBRACKET
-					token.Value = "]"
-				}
+				token.Type = RSBRACKET
 			case '{':
-				{
-					token.Type = LBRACE
-					token.Value = "{"
-				}
+				token.Type = LBRACE
 			case '}':
-				{
-					token.Type = RBRACE
-					token.Value = "}"
-				}
+				token.Type = RBRACE
 			case '(':
-				{
-					token.Type = LBRACKET
-					token.Value = "("
-				}
+				token.Type = LBRACKET
 			case ')':
-				{
-					token.Type = RBRACKET
-					token.Value = ")"
-				}
+				token.Type = RBRACKET
 			default:
-				{
-					token.Type = BAD
-					token.Value = string(curSymbol)
-				}
+				token.Type = BAD
 			}
+			token.Value = string(curSymbol)
 			*pos = *pos + 1
 		}
 	}
 }
 
+// Read current token from input string and move to next
 func (s *Scanner) Read() Token {
 	var token = Token{Type: EMPTY, Value: ""}
 	read(s.buf, &s.pos, &token)

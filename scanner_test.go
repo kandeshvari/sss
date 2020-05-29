@@ -1,4 +1,4 @@
-package main
+package sss
 
 import (
 	"testing"
@@ -37,7 +37,7 @@ var dataSuite1 = []DataSuiteScanner{
 	}},
 }
 
-func TestScanner_Read(ts *testing.T) {
+func Test_Scanner_Read(ts *testing.T) {
 	for _, data := range dataSuite1 {
 		s := NewScanner(&data.inputString)
 		var t = Token{}
