@@ -5,13 +5,6 @@ import (
 )
 
 func main() {
-	sym := 'a'
-	if isLetter(sym) {
-		fmt.Printf("ok\n")
-	} else {
-		fmt.Printf("bad: %s\n", string('a'))
-	}
-
 	str := "ab[de]}}5(ad){f}"
 	scanner := NewScanner(&str)
 
