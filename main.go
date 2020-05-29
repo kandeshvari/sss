@@ -1,40 +1,22 @@
 package main
 
 import (
-	"fmt"
+	"log"
 )
 
 func main() {
-	str := "ab[de]}}5(ad){f}"
-	scanner := NewScanner(&str)
+	//str := "abc[de[]]f]ab]]][sdf]s"
+	s := "a[cd"
+	str := s + s
 
-	var t = Token{}
-	for t.Type != EOF && t.Type != BAD {
-		t = scanner.Read()
-		fmt.Printf("T: %s, V: %s\n", tokenMap[t.Type], t.Value)
+	trees, err := BuildTrees(&str)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	//
-	//
-	//
-	//t := tree.NewTree()
-	//// abc[de]f
-	//// abc
-	//t.AddChild("abc", tree.LITERAL)
-	//// [
-	//t.AddChildAndMoveDown("[", tree.LSBRACKET)
-	//// de
-	//t.AddChild("de", tree.LITERAL)
-	//// ]
-	////t.MoveUp()
-	//t.ChangeNode("[]", tree.SBRACKETS)
-	//t.MoveUp()
-	//// f
-	//t.AddChild("f", tree.LITERAL)
-	//
-	//var s string
-	//tree.GetString(t.Root, &s)
-	//
-	//fmt.Printf(">>> %s", s)
-
+	for i, t := range trees {
+		s := ""
+		GetString(t.Root, &s)
+		log.Printf(">>> %d: %s", i, s)
+	}
 }
