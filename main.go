@@ -15,11 +15,10 @@ func main() {
 	str := "ab[de]}}5(ad){f}"
 	scanner := NewScanner(&str)
 
-	var t TokenType = EMPTY
-	var v string = ""
-	for t != EOF && t != BAD {
-		t, v = scanner.Read()
-		fmt.Printf("T: %s, V: %s\n", tokenMap[t], v)
+	var t = Token{}
+	for t.Type != EOF && t.Type != BAD {
+		t = scanner.Read()
+		fmt.Printf("T: %s, V: %s\n", tokenMap[t.Type], t.Value)
 	}
 
 	//

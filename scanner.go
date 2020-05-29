@@ -46,65 +46,65 @@ func isLetter(ch rune) bool {
 	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
 }
 
-func read(str *string, pos *int, token *TokenType, value *string) {
+func read(str *string, pos *int, token *Token) {
 	if *pos >= len(*str) {
-		if *token == EMPTY {
-			*token = EOF
+		if token.Type == EMPTY {
+			token.Type = EOF
 		}
 		return
 	}
 	curSymbol := rune((*str)[*pos])
 	if isLetter(curSymbol) {
-		if *token == EMPTY {
-			*token = LITERAL
-			*value = string(curSymbol)
+		if token.Type == EMPTY {
+			token.Type = LITERAL
+			token.Value = string(curSymbol)
 			*pos = *pos + 1
-			read(str, pos, token, value)
-		} else if *token == LITERAL {
-			*value += string(curSymbol)
+			read(str, pos, token)
+		} else if token.Type == LITERAL {
+			token.Value += string(curSymbol)
 			*pos = *pos + 1
-			read(str, pos, token, value)
+			read(str, pos, token)
 		} else {
 			// unread symbol
 			*pos = *pos - 1
 		}
 	} else {
-		if *token != LITERAL {
+		if token.Type != LITERAL {
 			switch curSymbol {
 			case '[':
 				{
-					*token = LSBRACKET
-					*value = "["
+					token.Type = LSBRACKET
+					token.Value = "["
 				}
 			case ']':
 				{
-					*token = RSBRACKET
-					*value = "]"
+					token.Type = RSBRACKET
+					token.Value = "]"
 				}
 			case '{':
 				{
-					*token = LBRACE
-					*value = "{"
+					token.Type = LBRACE
+					token.Value = "{"
 				}
 			case '}':
 				{
-					*token = RBRACE
-					*value = "}"
+					token.Type = RBRACE
+					token.Value = "}"
 				}
 			case '(':
 				{
-					*token = LBRACKET
-					*value = "("
+					token.Type = LBRACKET
+					token.Value = "("
 				}
 			case ')':
 				{
-					*token = RBRACKET
-					*value = ")"
+					token.Type = RBRACKET
+					token.Value = ")"
 				}
 			default:
 				{
-					*token = BAD
-					*value = ""
+					token.Type = BAD
+					token.Value = ""
 				}
 			}
 			*pos = *pos + 1
@@ -112,10 +112,9 @@ func read(str *string, pos *int, token *TokenType, value *string) {
 	}
 }
 
-func (s *Scanner) Read() (TokenType, string) {
-	var token TokenType = EMPTY
-	value := ""
-	read(s.buf, &s.pos, &token, &value)
+func (s *Scanner) Read() Token {
+	var token = Token{Type: EMPTY, Value: ""}
+	read(s.buf, &s.pos, &token)
 
-	return token, value
+	return token
 }
