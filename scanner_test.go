@@ -4,40 +4,36 @@ import (
 	"testing"
 )
 
-type Result struct {
-	token Token
-}
-
-type DataSuite struct {
+type DataSuiteScanner struct {
 	inputString string
-	result      []Result
+	result      []Token
 }
 
-var dataSuite1 = []DataSuite{
-	{"abc[de]f", []Result{
-		{Token{Type: LITERAL, Value: "abc"}},
-		{Token{Type: LSBRACKET, Value: "["}},
-		{Token{Type: LITERAL, Value: "de"}},
-		{Token{Type: RSBRACKET, Value: "]"}},
-		{Token{Type: LITERAL, Value: "f"}},
-		{Token{Type: EOF, Value: ""}},
+var dataSuite1 = []DataSuiteScanner{
+	{"abc[de]f", []Token{
+		{Type: LITERAL, Value: "abc"},
+		{Type: LSBRACKET, Value: "["},
+		{Type: LITERAL, Value: "de"},
+		{Type: RSBRACKET, Value: "]"},
+		{Type: LITERAL, Value: "f"},
+		{Type: EOF, Value: ""},
 	}},
-	{"[{(ab)}]", []Result{
-		{Token{Type: LSBRACKET, Value: "["}},
-		{Token{Type: LBRACE, Value: "{"}},
-		{Token{Type: LBRACKET, Value: "("}},
-		{Token{Type: LITERAL, Value: "ab"}},
-		{Token{Type: RBRACKET, Value: ")"}},
-		{Token{Type: RBRACE, Value: "}"}},
-		{Token{Type: RSBRACKET, Value: "]"}},
-		{Token{Type: EOF, Value: ""}},
+	{"[{(ab)}]", []Token{
+		{Type: LSBRACKET, Value: "["},
+		{Type: LBRACE, Value: "{"},
+		{Type: LBRACKET, Value: "("},
+		{Type: LITERAL, Value: "ab"},
+		{Type: RBRACKET, Value: ")"},
+		{Type: RBRACE, Value: "}"},
+		{Type: RSBRACKET, Value: "]"},
+		{Type: EOF, Value: ""},
 	}},
-	{"[{(ab5)}]", []Result{
-		{Token{Type: LSBRACKET, Value: "["}},
-		{Token{Type: LBRACE, Value: "{"}},
-		{Token{Type: LBRACKET, Value: "("}},
-		{Token{Type: LITERAL, Value: "ab"}},
-		{Token{Type: BAD, Value: ""}},
+	{"[{(ab5)}]", []Token{
+		{Type: LSBRACKET, Value: "["},
+		{Type: LBRACE, Value: "{"},
+		{Type: LBRACKET, Value: "("},
+		{Type: LITERAL, Value: "ab"},
+		{Type: BAD, Value: "5"},
 	}},
 }
 
@@ -48,9 +44,9 @@ func TestScanner_Read(ts *testing.T) {
 		idx := 0
 		for t.Type != EOF && t.Type != BAD {
 			t = s.Read()
-			if t.Type != data.result[idx].token.Type || t.Value != data.result[idx].token.Value {
+			if t.Type != data.result[idx].Type || t.Value != data.result[idx].Value {
 				ts.Errorf("await: t: %s, v: %s; got t: %s, v: %s",
-					tokenMap[data.result[idx].token.Type], data.result[idx].token.Value,
+					tokenMap[data.result[idx].Type], data.result[idx].Value,
 					tokenMap[t.Type], t.Value)
 			}
 			idx++

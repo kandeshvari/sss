@@ -1,6 +1,8 @@
-package tree
+package main
 
-import "testing"
+import (
+	"testing"
+)
 
 var tr *Tree
 
@@ -8,17 +10,16 @@ func Setup() {
 	tr = NewTree()
 	// abc[de]f
 	// abc
-	tr.AddChild("abc", LITERAL)
+	tr.AddChild(LITERAL, "abc")
 	// [
-	tr.AddChildAndMoveDown("[", LSBRACKET)
+	tr.AddChildAndMoveOnto(LSBRACKET, "[")
 	// de
-	tr.AddChild("de", LITERAL)
+	tr.AddChild(LITERAL, "de")
 	// ]
-	//t.MoveUp()
-	tr.ChangeNode("[]", SBRACKETS)
+	tr.ChangeNode(SBRACKETS, "[]")
 	tr.MoveUp()
 	// f
-	tr.AddChild("f", LITERAL)
+	tr.AddChild(LITERAL, "f")
 }
 
 func TestGetString(t *testing.T) {

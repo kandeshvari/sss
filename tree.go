@@ -1,21 +1,29 @@
-package tree
+package main
 
 import (
 	"errors"
 )
 
 const (
-	ROOT = iota
+	// pure node types
+	ROOT  = iota
+	EMPTY = iota // pure token type
+	BRACKETS
+	BRACES
+	SBRACKETS
+
+	// shared btw node types and token types
 	LITERAL
 	LBRACKET
 	RBRACKET
-	BRACKETS
 	LBRACE
 	RBRACE
-	BRACES
 	LSBRACKET
 	RSBRACKET
-	SBRACKETS
+
+	// pure token types
+	BAD
+	EOF
 )
 
 type NodeType int
@@ -27,11 +35,11 @@ type Node struct {
 	Value    string
 }
 
-func (n *Node) GetValue() (string, NodeType) {
-	return n.Value, n.Type
+func (n *Node) GetValue() (NodeType, string) {
+	return n.Type, n.Value
 }
 
-func (n *Node) SetValue(value string, typ NodeType) {
+func (n *Node) SetValue(typ NodeType, value string) {
 	n.Value = value
 	n.Type = typ
 }
@@ -42,8 +50,6 @@ func (n *Node) GetParent() *Node {
 
 type Tree struct {
 	Root        *Node
-	S           string
-	Len         string
 	CurrentNode *Node
 }
 
@@ -52,14 +58,14 @@ func NewTree() *Tree {
 	return &Tree{Root: node, CurrentNode: node}
 }
 
-func (t *Tree) AddChild(value string, typ NodeType) *Node {
+func (t *Tree) AddChild(typ NodeType, value string) *Node {
 	node := &Node{Parent: t.CurrentNode, Type: typ, Value: value}
 	t.CurrentNode.Children = append(t.CurrentNode.Children, node)
 	return node
 }
 
-func (t *Tree) AddChildAndMoveDown(value string, typ NodeType) *Node {
-	node := t.AddChild(value, typ)
+func (t *Tree) AddChildAndMoveOnto(typ NodeType, value string) *Node {
+	node := t.AddChild(typ, value)
 	t.CurrentNode = node
 	return node
 }
@@ -72,9 +78,13 @@ func (t *Tree) MoveUp() (*Node, error) {
 	return t.CurrentNode, nil
 }
 
-func (t *Tree) ChangeNode(value string, typ NodeType) *Node {
-	t.CurrentNode.SetValue(value, typ)
+func (t *Tree) ChangeNode(typ NodeType, value string) *Node {
+	t.CurrentNode.SetValue(typ, value)
 	return t.CurrentNode
+}
+
+func (t *Tree) GetCurrentNodeValues() (NodeType, string) {
+	return t.CurrentNode.GetValue()
 }
 
 func GetString(n *Node, str *string) {

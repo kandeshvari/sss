@@ -1,19 +1,6 @@
 package main
 
-const (
-	EMPTY     = iota // no token
-	LITERAL          // letter(s)
-	LBRACKET         // (
-	RBRACKET         // )
-	LBRACE           // {
-	RBRACE           // }
-	LSBRACKET        // [
-	RSBRACKET        // ]
-	BAD              // bad input
-	EOF              // end of buffer
-)
-
-type TokenType int
+type TokenType NodeType
 
 var tokenMap = map[TokenType]string{
 	EMPTY:     "EMPTY",     // no token
@@ -104,7 +91,7 @@ func read(str *string, pos *int, token *Token) {
 			default:
 				{
 					token.Type = BAD
-					token.Value = ""
+					token.Value = string(curSymbol)
 				}
 			}
 			*pos = *pos + 1
