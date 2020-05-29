@@ -1,13 +1,14 @@
-package main
+package sss
 
 import (
 	"errors"
 )
 
 const (
-	// pure node types
-	ROOT  = iota
 	EMPTY = iota // pure token type
+
+	// pure node types
+	ROOT = iota
 	BRACKETS
 	BRACES
 	SBRACKETS
@@ -87,7 +88,7 @@ func (t *Tree) GetCurrentNodeValues() (NodeType, string) {
 	return t.CurrentNode.GetValue()
 }
 
-func GetString(n *Node, str *string) {
+func GetSubstrings(n *Node, str *string, buf *[]string) {
 
 	if n == nil {
 		return
@@ -95,26 +96,59 @@ func GetString(n *Node, str *string) {
 	for _, node := range n.Children {
 		switch node.Type {
 		case LITERAL:
+			*str = *str + node.Value
+		case LSBRACKET, LBRACE, LBRACKET:
+			//log.Printf("XXX: found unclosed. str: %s", *str)
+			*buf = append(*buf, *str)
+			*str = ""
+			GetSubstrings(node, str, buf)
+		case SBRACKETS:
+			*str = *str + "["
+			GetSubstrings(node, str, buf)
+			*str = *str + "]"
+		case BRACKETS:
+			*str = *str + "("
+			GetSubstrings(node, str, buf)
+			*str = *str + ")"
+		case BRACES:
+			*str = *str + "{"
+			GetSubstrings(node, str, buf)
+			*str = *str + "}"
+		}
+	}
+}
+
+func GetStringRev(n *Node, str *string) {
+
+	if n == nil {
+		return
+	}
+	//for _, node := range n.Children {
+	for i := len(n.Children) - 1; i >= 0; i-- {
+		node := n.Children[i]
+		switch node.Type {
+		case LITERAL:
 			{
-				*str = *str + node.Value
+				*str = node.Value + *str
 			}
 		case SBRACKETS:
 			{
-				*str = *str + "["
-				GetString(node, str)
-				*str = *str + "]"
+				*str = "]" + *str
+				GetStringRev(node, str)
+				*str = "[" + *str
+
 			}
 		case BRACKETS:
 			{
-				*str = *str + "("
-				GetString(node, str)
-				*str = *str + ")"
+				*str = ")" + *str
+				GetStringRev(node, str)
+				*str = "(" + *str
 			}
 		case BRACES:
 			{
-				*str = *str + "{"
-				GetString(node, str)
-				*str = *str + "}"
+				*str = "}" + *str
+				GetStringRev(node, str)
+				*str = "{" + *str
 			}
 		}
 	}
