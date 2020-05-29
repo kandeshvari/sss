@@ -88,6 +88,7 @@ func (t *Tree) GetCurrentNodeValues() (NodeType, string) {
 	return t.CurrentNode.GetValue()
 }
 
+// Get substrings from tree by traversal
 func GetSubstrings(n *Node, str *string, buf *[]string) {
 
 	if n == nil {
@@ -98,7 +99,7 @@ func GetSubstrings(n *Node, str *string, buf *[]string) {
 		case LITERAL:
 			*str = *str + node.Value
 		case LSBRACKET, LBRACE, LBRACKET:
-			//log.Printf("XXX: found unclosed. str: %s", *str)
+			// here we catch alone open brackets and split substring to correct pieces
 			*buf = append(*buf, *str)
 			*str = ""
 			GetSubstrings(node, str, buf)
@@ -114,42 +115,6 @@ func GetSubstrings(n *Node, str *string, buf *[]string) {
 			*str = *str + "{"
 			GetSubstrings(node, str, buf)
 			*str = *str + "}"
-		}
-	}
-}
-
-func GetStringRev(n *Node, str *string) {
-
-	if n == nil {
-		return
-	}
-	//for _, node := range n.Children {
-	for i := len(n.Children) - 1; i >= 0; i-- {
-		node := n.Children[i]
-		switch node.Type {
-		case LITERAL:
-			{
-				*str = node.Value + *str
-			}
-		case SBRACKETS:
-			{
-				*str = "]" + *str
-				GetStringRev(node, str)
-				*str = "[" + *str
-
-			}
-		case BRACKETS:
-			{
-				*str = ")" + *str
-				GetStringRev(node, str)
-				*str = "(" + *str
-			}
-		case BRACES:
-			{
-				*str = "}" + *str
-				GetStringRev(node, str)
-				*str = "{" + *str
-			}
 		}
 	}
 }

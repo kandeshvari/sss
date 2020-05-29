@@ -48,7 +48,7 @@ func Test_CommonCreateTreeRoutines(t *testing.T) {
 
 }
 
-func Test_GetString(t *testing.T) {
+func Test_GetSubstrings(t *testing.T) {
 	Setup()
 
 	var s string
